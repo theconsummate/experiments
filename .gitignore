@@ -3,7 +3,7 @@ gpu/__pycache__/
 
 
 *.pdf
-email/config.json
+email_util/config.json
 *.doc*
 *.pages
 *.html
