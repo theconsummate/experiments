@@ -1,4 +1,9 @@
+email_util/__pycache__/
+gpu/__pycache__/
+
+
 *.pdf
+email/config.json
 *.doc*
 *.pages
 *.html
