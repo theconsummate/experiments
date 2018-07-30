@@ -14,6 +14,6 @@ if __name__ == '__main__':
 
     # print(result.stdout)
     # dump the output for offline debugging
-    pickle.dump(result, open("output.pickle", rb), pickle.HIGHEST_PROTOCOL)
+    pickle.dump(result, open("output.pickle", 'rb'), pickle.HIGHEST_PROTOCOL)
     # subject, message, path to config file
     # send("gpu stats", "something", "email_util/config.json")
