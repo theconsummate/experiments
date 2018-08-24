@@ -1,4 +1,4 @@
-setwd("/home/dhruv/code/upwork/swap-rates")
+setwd("/home/dhruv/code/swap-rates")
 library(ggplot2)
 library(dplyr)
 
@@ -20,6 +20,7 @@ trsy$date_grcut <- cut(trsy$Date,
 breaks = as.Date(c("01/01/1990", "01/01/1995", "01/01/2000", "01/01/2005",
                    "01/01/2010", "01/01/2015", "01/01/2020"), format="%m/%d/%Y"),)
 
+trsy = na.omit(trsy)
 # labels = c("0-5 mnths", "6-11 mnths", "12-23 mnths", "24-59 mnths", "5-14 yrs", "adult"), )
 
 g1 = ggplot(trsy, aes(x=X10.yr_grcut, fill=date_grcut)) + geom_bar()
@@ -39,4 +40,7 @@ full = full_join(trsy, error, by = "X10.yr_grcut")
 
 ggplot(full, aes(x=X10.yr_grcut)) + geom_bar(aes(fill=date_grcut)) +
   geom_point(aes(y=err, group=1)) + geom_line(aes(y=err, group=1)) + 
-  scale_y_continuous(sec.axis = sec_axis(~.*1, name = "Error"))
+  scale_y_continuous(sec.axis = sec_axis(~.*1, name = "Annualized deviations (bp)")) + 
+  ggtitle("Daily Volatility versus Level for 10 Year Treasury Rate") + 
+  xlab("rate level, %") + ylab("Observations") + 
+  guides(fill=guide_legend(title=NULL)) + scale_fill_grey() + theme_classic()
