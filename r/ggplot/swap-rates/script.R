@@ -100,8 +100,8 @@ error.swap = na.omit(error.swap)
 full.swap = full_join(swap, error.swap, by = "PX_LAST_grcut")
 
 ggplot(full.swap, aes(x=PX_LAST_grcut)) + geom_bar(aes(fill=date_grcut)) +
-  geom_point(aes(y=err, group=1)) + geom_line(aes(y=err, group=1)) +
-  scale_y_continuous(sec.axis = sec_axis(~.*1, name = "Annualized deviations (bp)")) +
+  geom_point(aes(y=err*5, group=1)) + geom_line(aes(y=err*5, group=1)) +
+  scale_y_continuous(sec.axis = sec_axis(~./5, name = "Annualized deviations (bp)")) +
   ggtitle("Daily Volatility versus Level for 10 Year Swap Rate") +
   xlab("rate level, %") + ylab("Observations") +
   guides(fill=guide_legend(title=NULL)) + scale_fill_grey() + theme_classic()
