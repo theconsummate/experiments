@@ -2,6 +2,7 @@ setwd("~/code/utils/r/ggplot/swap-rates")
 library(ggplot2)
 library(dplyr)
 library(reshape)
+library(RColorBrewer)
 
 swap = read.csv("swap_rates.csv")
 skew = read.csv("skew_5x10_20180807_modified.csv")
@@ -42,25 +43,27 @@ ggplot(full, aes(x=X10.yr_grcut)) + geom_bar(aes(fill=date_grcut)) +
   scale_y_continuous(sec.axis = sec_axis(~.*1, name = "Annualized deviations (bp)")) +
   ggtitle("Daily Volatility versus Level for 10 Year Treasury Rate") +
   xlab("rate level, %") + ylab("Observations") +
-  guides(fill=guide_legend(title=NULL)) + scale_fill_grey() + theme_classic()
+  guides(fill=guide_legend(title=NULL)) + scale_fill_brewer(palette = "Pastel1")
+# + scale_fill_grey() + theme_classic()
 
 # skew plot
 atm = 305.0950
-skew = skew %>% mutate(cev.0 = ((atm/(atm + strike))^((1-0)/2)) )
+sigmaF = filter(skew, strike == 0)$volatility
+skew = skew %>% mutate(cev.0 = ((atm/(atm + strike))^((1-0)/2)) * sigmaF )
 
-skew = skew %>% mutate(cev.0.23 = ((atm/(atm + strike))^((1-0.23)/2)) )
-skew = skew %>% mutate(cev.0.5 = ((atm/(atm + strike))^((1-0.5)/2)) )
-skew = skew %>% mutate(cev.1 = ((atm/(atm + strike))^((1-1)/2)) )
+# skew = skew %>% mutate(cev.0.23 = ((atm/(atm + strike))^((1-0.23)/2)) * sigmaF )
+skew = skew %>% mutate(cev.0.5 = ((atm/(atm + strike))^((1-0.5)/2)) * sigmaF )
+skew = skew %>% mutate(cev.1 = ((atm/(atm + strike))^((1-1)/2)) * sigmaF )
 
 # drop volatality column
 skew = subset(skew, select=-c(volatility))
 
 # ggplot(skew, aes(x=strike)) +
-#   # geom_point(aes(y=volatility)) +
+#   geom_point(aes(y=volatility)) +
 #   geom_point(aes(y=cev.0)) +
-#   geom_point(aes(y=cev.0.23)) +
 #   geom_point(aes(y=cev.0.5)) +
-#   geom_point(aes(y=cev.1))
+#   geom_point(aes(y=cev.1)) +
+#   geom_point(aes(y=cev.0.23))
 
 
 skk = melt(skew, id=c("strike"))
@@ -104,4 +107,5 @@ ggplot(full.swap, aes(x=PX_LAST_grcut)) + geom_bar(aes(fill=date_grcut)) +
   scale_y_continuous(sec.axis = sec_axis(~./5, name = "Annualized deviations (bp)")) +
   ggtitle("Daily Volatility versus Level for 10 Year Swap Rate") +
   xlab("rate level, %") + ylab("Observations") +
-  guides(fill=guide_legend(title=NULL)) + scale_fill_grey() + theme_classic()
+  guides(fill=guide_legend(title=NULL)) + scale_fill_brewer(palette = "Pastel1")
+# scale_fill_grey() + theme_classic()
