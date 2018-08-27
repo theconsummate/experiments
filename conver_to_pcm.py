@@ -1,6 +1,6 @@
 import sys
 import glob
-import scipy
+from scipy.io import wavfile
 import numpy
 from tqdm import tqdm
 
