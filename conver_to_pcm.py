@@ -1,7 +1,7 @@
 import sys
 import glob
 from scipy.io import wavfile
-import numpy
+import numpy as np
 from tqdm import tqdm
 
 files = glob.glob(sys.argv[1])
