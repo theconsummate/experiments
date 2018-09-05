@@ -7,3 +7,7 @@ email_util/config.json
 *.doc*
 *.pages
 *.html
+*.RData
+*.RHistory
+*.png
+*.csv
