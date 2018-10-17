@@ -13,7 +13,8 @@ import sys
 # result = subprocess.run(["nvidia-smi"], stdout=subprocess.PIPE)
 
 # this function checks if stats for all the specified number of gpus are below the input thresholds.
-def parse_command_output(result, num_gpu = 4, mem_threshold = 0.1, util_threshold = 0.1):
+def parse_command_output(num_gpu = 4, mem_threshold = 0.1, util_threshold = 0.1):
+    result = subprocess.run(['nvidia-smi'], stdout=subprocess.PIPE)
     mem, uti = None, None
     def check_property(property, threshold):
         i = 0
@@ -42,7 +43,7 @@ def parse_command_output(result, num_gpu = 4, mem_threshold = 0.1, util_threshol
         send("gpu is free", "mem: " + str(mem) + ", uti: " + str(uti), "email_util/config.json")
         # send one email and exit
         sys.exit()
-    t = Timer(get_secs(), parse_command_output, result, arguments.gpu, arguments.mem, arguments.util)
+    t = Timer(get_secs(), parse_command_output)
     t.start()
 
 def parse_single_line(line):
@@ -71,8 +72,6 @@ if __name__ == '__main__':
     args.add_argument('--util',type=float, help='gpu util threshold')
     arguments = args.parse_args()
 
-    result = subprocess.run(['nvidia-smi'], stdout=subprocess.PIPE)
-
     # print(result.stdout)
     # dump the output for offline debugging
     # outfile = open("output.pickle",'wb')
@@ -84,8 +83,8 @@ if __name__ == '__main__':
     # result = pickle.load(infile)
     # infile.close()
 
-    print(parse_command_output(result, num_gpu= arguments.gpu, mem_threshold=arguments.mem, util_threshold=arguments.util))
+    print(parse_command_output(num_gpu= arguments.gpu, mem_threshold=arguments.mem, util_threshold=arguments.util))
     # subject, message, path to config file
     # send("gpu stats", "something", "email_util/config.json")
-    t = Timer(get_secs(), parse_command_output, result, arguments.gpu, arguments.mem, arguments.util)
+    t = Timer(get_secs(), parse_command_output)
     t.start()
