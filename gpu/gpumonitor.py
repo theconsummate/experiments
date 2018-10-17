@@ -39,6 +39,7 @@ def parse_command_output(num_gpu = 4, mem_threshold = 0.1, util_threshold = 0.1)
     if util_threshold:
         uti = check_property("util", mem_threshold)
     
+    print("mem: " + str(mem) + ", uti: " + str(uti))
     if mem or uti:
         send("gpu is free", "mem: " + str(mem) + ", uti: " + str(uti), "email_util/config.json")
         # send one email and exit
