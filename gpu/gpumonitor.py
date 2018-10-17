@@ -5,12 +5,15 @@
 import subprocess
 import pickle
 import argparse
+from threading import Timer
+from datetime import datetime
 
 from email_util.send_email import send
+import sys
 # result = subprocess.run(["nvidia-smi"], stdout=subprocess.PIPE)
 
 # this function checks if stats for all the specified number of gpus are below the input thresholds.
-def parse_command_output(result, num_gpu = 4, mem_threshold = None, util_threshold = None):
+def parse_command_output(result, num_gpu = 4, mem_threshold = 0.1, util_threshold = 0.1):
     mem, uti = None, None
     def check_property(property, threshold):
         i = 0
@@ -35,7 +38,12 @@ def parse_command_output(result, num_gpu = 4, mem_threshold = None, util_thresho
     if util_threshold:
         uti = check_property("util", mem_threshold)
     
-    return mem, uti
+    if mem or uti:
+        send("gpu is free", "mem: " + str(mem) + ", uti: " + str(uti), "email_util/config.json")
+        # send one email and exit
+        sys.exit()
+    t = Timer(get_secs(), parse_command_output, result, arguments.gpu, arguments.mem, arguments.util)
+    t.start()
 
 def parse_single_line(line):
     args = line.split("|")
@@ -44,6 +52,17 @@ def parse_single_line(line):
     used, total = [int(x.strip()) for x in memory.split("/")]
     util = args[3].replace("Default", "").replace("%", "").strip()
     return {"memory": used/total, "util": int(util)/100}
+
+
+def get_secs():
+    # x=datetime.today()
+    # y=x.replace(day=x.day+1, hour=6, minute=0, second=0, microsecond=0)
+    # delta_t=y-x
+    # secs=delta_t.seconds+1
+    # # secs = x.hour -11
+    # return secs
+    # check every 5 mins
+    return 300
 
 if __name__ == '__main__':
     args = argparse.ArgumentParser()
@@ -68,3 +87,5 @@ if __name__ == '__main__':
     print(parse_command_output(result, num_gpu= arguments.gpu, mem_threshold=arguments.mem, util_threshold=arguments.util))
     # subject, message, path to config file
     # send("gpu stats", "something", "email_util/config.json")
+    t = Timer(get_secs(), parse_command_output, result, arguments.gpu, arguments.mem, arguments.util)
+    t.start()
