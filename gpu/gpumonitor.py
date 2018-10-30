@@ -14,6 +14,7 @@ import sys
 
 # this function checks if stats for all the specified number of gpus are below the input thresholds.
 def parse_command_output(num_gpu = 4, mem_threshold = 0.1, util_threshold = 0.1):
+    print(num_gpu, mem_threshold, util_threshold)
     result = subprocess.run(['nvidia-smi'], stdout=subprocess.PIPE)
     mem, uti = None, None
     def check_property(property, threshold):
@@ -24,28 +25,32 @@ def parse_command_output(num_gpu = 4, mem_threshold = 0.1, util_threshold = 0.1)
         if i >= num_gpu:
             return True
         return False
-    
+
     lines = result.stdout.decode("utf-8").split("\n")
 
     line_nos = [8, 11, 14, 17]
     stats = []
     for i in line_nos:
         stats.append(parse_single_line(lines[i]))
-    
+
+    print(stats)
+
     if mem_threshold:
         mem = check_property("memory", mem_threshold)
 
-    
+
     if util_threshold:
         uti = check_property("util", mem_threshold)
-    
+
     print("mem: " + str(mem) + ", uti: " + str(uti))
     if mem or uti:
         send("gpu is free", "mem: " + str(mem) + ", uti: " + str(uti), "email_util/config.json")
         # send one email and exit
         sys.exit()
-    t = Timer(get_secs(), parse_command_output)
+    fargs = list([num_gpu, mem_threshold, util_threshold])
+    t = Timer(get_secs(), parse_command_output, fargs)
     t.start()
+
 
 def parse_single_line(line):
     args = line.split("|")
@@ -87,5 +92,6 @@ if __name__ == '__main__':
     print(parse_command_output(num_gpu= arguments.gpu, mem_threshold=arguments.mem, util_threshold=arguments.util))
     # subject, message, path to config file
     # send("gpu stats", "something", "email_util/config.json")
-    t = Timer(get_secs(), parse_command_output)
+    fargs = list([arguments.gpu, arguments.mem, arguments.util])
+    t = Timer(get_secs(), parse_command_output, fargs)
     t.start()
