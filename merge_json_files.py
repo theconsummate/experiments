@@ -5,8 +5,8 @@ import json
 f1 = open(sys.argv[1])
 f2 = open(sys.argv[2])
 
-j1 = json.load(f1)
-j2 = json.load(f2)
+j1 = json.load(f1)["utts"]
+j2 = json.load(f2)["utts"]
 
 out_utts = {}
 
@@ -18,4 +18,4 @@ for key in j2.keys():
 
 
 f3 = open(sys.argv[3], 'w')
-json.dump({"utts":out_utts}, f3)
+json.dump({"utts":out_utts}, f3, indent=4)
