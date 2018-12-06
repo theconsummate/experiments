@@ -18,4 +18,4 @@ for key in j2.keys():
 
 
 f3 = open(sys.argv[3], 'w')
-json.dum({"utts":out_utts}, f3)
+json.dump({"utts":out_utts}, f3)
