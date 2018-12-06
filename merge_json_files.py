@@ -14,7 +14,7 @@ for key in j1.keys():
     out_utts[key+"_1"] = j1[key]
 
 for key in j2.keys():
-    out_utts[key+"_2"] = j1[key]
+    out_utts[key+"_2"] = j2[key]
 
 
 f3 = open(sys.argv[3], 'w')
