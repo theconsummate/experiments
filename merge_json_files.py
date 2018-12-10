@@ -14,7 +14,7 @@ for i, file in enumerate(sys.argv[2:]):
     f = open(file)
     j = json.load(f)["utts"]
     for key in j.keys():
-        out_utts[key+"_" + i] = j[key]
+        out_utts[key+"_" + str(i)] = j[key]
 
 # for key in j1.keys():
 #     out_utts[key+"_1"] = j1[key]
