@@ -1,5 +1,6 @@
 import sys
 import random
+import os
 
 """
 python3 make_tts_dataset.py <path to file>
@@ -16,7 +17,8 @@ def process_dataset(arr, outfile):
         line = '( arctic_a0001 "Author of the danger trail, Philip Steels, etc." )\n'
         """
         wav, text = line.strip()[2:-2].replace('"', "").split(" ", 1)
-        fo.write(dirname+wav+".wav|" + text.strip()+"\n")
+        if os.path.isfile(dirname+wav+".wav"):
+            fo.write(dirname+wav+".wav|" + text.strip()+"\n")
     fo.close()
 
 f = open(fname, 'r')
